@@ -37,14 +37,14 @@
             label2 = new Label();
             cmbCategory = new ComboBox();
             dgvParts = new DataGridView();
-            btnAdd = new Button();
-            btnEdit = new Button();
-            btnDelete = new Button();
             colName = new DataGridViewTextBoxColumn();
             colManufacturer = new DataGridViewTextBoxColumn();
             colQuantity = new DataGridViewTextBoxColumn();
             colPrice = new DataGridViewTextBoxColumn();
             colType = new DataGridViewTextBoxColumn();
+            btnAdd = new Button();
+            btnEdit = new Button();
+            btnDelete = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvParts).BeginInit();
             SuspendLayout();
             // 
@@ -82,7 +82,7 @@
             cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbCategory.Font = new Font("Segoe UI", 14.25F);
             cmbCategory.FormattingEnabled = true;
-            cmbCategory.Location = new Point(695, 29);
+            cmbCategory.Location = new Point(695, 37);
             cmbCategory.Name = "cmbCategory";
             cmbCategory.Size = new Size(164, 33);
             cmbCategory.TabIndex = 3;
@@ -120,42 +120,6 @@
             dgvParts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvParts.Size = new Size(833, 350);
             dgvParts.TabIndex = 4;
-            // 
-            // btnAdd
-            // 
-            btnAdd.BackColor = Color.LightGreen;
-            btnAdd.Font = new Font("Segoe UI", 14.25F);
-            btnAdd.Location = new Point(484, 445);
-            btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(121, 54);
-            btnAdd.TabIndex = 5;
-            btnAdd.Text = "Добави";
-            btnAdd.UseVisualStyleBackColor = false;
-            btnAdd.Click += btnAdd_Click;
-            // 
-            // btnEdit
-            // 
-            btnEdit.BackColor = Color.LightBlue;
-            btnEdit.Font = new Font("Segoe UI", 14.25F);
-            btnEdit.Location = new Point(611, 445);
-            btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(121, 54);
-            btnEdit.TabIndex = 5;
-            btnEdit.Text = "Редактирай";
-            btnEdit.UseVisualStyleBackColor = false;
-            btnEdit.Click += btnEdit_Click;
-            // 
-            // btnDelete
-            // 
-            btnDelete.BackColor = Color.Coral;
-            btnDelete.Font = new Font("Segoe UI", 14.25F);
-            btnDelete.Location = new Point(738, 445);
-            btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(121, 54);
-            btnDelete.TabIndex = 5;
-            btnDelete.Text = "Изтрий";
-            btnDelete.UseVisualStyleBackColor = false;
-            btnDelete.Click += btnDelete_Click;
             // 
             // colName
             // 
@@ -201,6 +165,42 @@
             colType.HeaderText = "Тип компонент";
             colType.Name = "colType";
             colType.ReadOnly = true;
+            // 
+            // btnAdd
+            // 
+            btnAdd.BackColor = Color.LightGreen;
+            btnAdd.Font = new Font("Segoe UI", 14.25F);
+            btnAdd.Location = new Point(484, 445);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(121, 54);
+            btnAdd.TabIndex = 5;
+            btnAdd.Text = "Добави";
+            btnAdd.UseVisualStyleBackColor = false;
+            btnAdd.Click += btnAdd_Click;
+            // 
+            // btnEdit
+            // 
+            btnEdit.BackColor = Color.LightBlue;
+            btnEdit.Font = new Font("Segoe UI", 14.25F);
+            btnEdit.Location = new Point(611, 445);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(121, 54);
+            btnEdit.TabIndex = 5;
+            btnEdit.Text = "Редактирай";
+            btnEdit.UseVisualStyleBackColor = false;
+            btnEdit.Click += btnEdit_Click;
+            // 
+            // btnDelete
+            // 
+            btnDelete.BackColor = Color.Coral;
+            btnDelete.Font = new Font("Segoe UI", 14.25F);
+            btnDelete.Location = new Point(738, 445);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(121, 54);
+            btnDelete.TabIndex = 5;
+            btnDelete.Text = "Изтрий";
+            btnDelete.UseVisualStyleBackColor = false;
+            btnDelete.Click += btnDelete_Click;
             // 
             // MainForm
             // 
