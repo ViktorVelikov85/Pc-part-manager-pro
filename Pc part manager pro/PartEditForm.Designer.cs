@@ -589,8 +589,10 @@
             // 
             // PartEditForm
             // 
+            AcceptButton = btnSave;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = btnCancel;
             ClientSize = new Size(807, 396);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);

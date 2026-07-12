@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using Pc_part_manager_pro.Models;
+﻿using Pc_part_manager_pro.Models;
 using Pc_part_manager_pro.Models.PcParts;
 
 namespace Pc_part_manager_pro
@@ -10,51 +8,58 @@ namespace Pc_part_manager_pro
         public ComputerPart CreatedPart { get; private set; }
         private readonly bool _isEditMode = false;
 
-        // 1. Конструктор за ДОБАВЯНЕ (извиква се без параметри)
+        // Конструктор за ДОБАВЯНЕ на нов компонент
         public PartEditForm()
         {
             InitializeComponent();
             _isEditMode = false;
 
-            // Първоначално скриваме всичко и избираме първия елемент (CPU)
             HideAllSpecificFields();
+            SetupNumericAutoSelect();
+
             if (cmbType.Items.Count > 0)
             {
                 cmbType.SelectedIndex = 0;
             }
+
+            // Закачаме събитието, което се изпълнява ВЕДНАГА след като формата се покаже
+            this.Shown += PartEditForm_Shown;
         }
 
-        // 2. Конструктор за РЕДАКТИРАНЕ (подаваме му частта от таблицата)
+        // Конструктор за РЕДАКТИРАНЕ на съществуващ компонент
         public PartEditForm(ComputerPart partToEdit)
         {
             InitializeComponent();
             _isEditMode = true;
             CreatedPart = partToEdit;
 
-            // Скриваме всичко преди да заредим конкретните полета
             HideAllSpecificFields();
+            SetupNumericAutoSelect();
 
-            // Зареждаме общите данни в контролите
             txtName.Text = partToEdit.Name;
             txtManufacturer.Text = partToEdit.Manufacturer;
             numPrice.Value = partToEdit.Price;
             numQuantity.Value = partToEdit.Quantity;
 
-            // Конвертираме типа към главни букви, за да съвпадне с Items в ComboBox-а ("Cpu" -> "CPU")
             string typeForCombo = partToEdit.PartType.ToUpper();
-            if (typeForCombo == "MOTHERBOARD") typeForCombo = "Motherboard"; // Ако в Items е записано с малки букви
+            if (typeForCombo == "MOTHERBOARD") typeForCombo = "Motherboard";
 
             cmbType.SelectedItem = typeForCombo;
-            cmbType.Enabled = false; // Заключваме типа хардуер при редакция
+            cmbType.Enabled = false;
 
-            // Ръчно задействаме показването на правилния панел
             UpdateSpecificPanelVisibility(typeForCombo);
-
-            // Попълваме специфичните контроли според конкретния ООП клас
             PopulateSpecificFields(partToEdit);
+
+            // Закачаме събитието, което се изпълнява ВЕДНАГА след като формата се покаже
+            this.Shown += PartEditForm_Shown;
         }
 
-        // ⚡ СЪБИТИЕ ПРИ СМЯНА НА ИЗБОРА В COMBOBOX-А
+        // Премахва първоначалния автоматичен фокус от абсолютно всички контроли
+        private void PartEditForm_Shown(object sender, EventArgs e)
+        {
+            this.ActiveControl = null;
+        }
+
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbType.SelectedItem != null)
@@ -63,7 +68,6 @@ namespace Pc_part_manager_pro
             }
         }
 
-        // Управление на видимостта според избрания тип
         private void UpdateSpecificPanelVisibility(string selectedType)
         {
             HideAllSpecificFields();
@@ -115,7 +119,6 @@ namespace Pc_part_manager_pro
             }
         }
 
-        // ⚡ СЪБИТИЕ НА БУТОНА ЗАПАЗИ
         private void btnSave_Click(object sender, EventArgs e)
         {
             try
@@ -126,7 +129,6 @@ namespace Pc_part_manager_pro
                     return;
                 }
 
-                // Ако сме в режим на добавяне, създаваме нов обект според селекцията
                 if (!_isEditMode)
                 {
                     string selectedType = cmbType.SelectedItem.ToString();
@@ -140,13 +142,11 @@ namespace Pc_part_manager_pro
                     }
                 }
 
-                // Пълнене на общите Properties
                 CreatedPart.Name = txtName.Text;
                 CreatedPart.Manufacturer = txtManufacturer.Text;
                 CreatedPart.Price = numPrice.Value;
                 CreatedPart.Quantity = (int)numQuantity.Value;
 
-                // Пълнене на специфичните Properties
                 if (CreatedPart is Cpu cpu)
                 {
                     cpu.Cores = (int)numCpuCores.Value;
@@ -190,16 +190,40 @@ namespace Pc_part_manager_pro
             }
         }
 
-        // ⚡ СЪБИТИЕ НА БУТОНА ОТКАЗ
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();
         }
 
-        // ========================================================
-        // 🛠️ МЕТОДИ ЗА СКРИВАНЕ И ПОКАЗВАНЕ НА СПЕЦИФИЧНИТЕ ПОЛЕТА
-        // ========================================================
+        private void SetupNumericAutoSelect()
+        {
+            foreach (Control ctrl in this.Controls)
+            {
+                SubscribeNumeric(ctrl);
+            }
+
+            if (this.Controls.Find("pnlSpecifics", true).Length > 0)
+            {
+                Control pnl = this.Controls.Find("pnlSpecifics", true)[0];
+                foreach (Control ctrl in pnl.Controls)
+                {
+                    SubscribeNumeric(ctrl);
+                }
+            }
+        }
+
+        private void SubscribeNumeric(Control ctrl)
+        {
+            if (ctrl is NumericUpDown num)
+            {
+                num.Enter += (s, e) =>
+                {
+                    this.BeginInvoke(new Action(() => num.Select(0, num.Text.Length)));
+                };
+            }
+        }
+
         private void HideAllSpecificFields()
         {
             ToggleCpuFields(false);

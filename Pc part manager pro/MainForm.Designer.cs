@@ -45,6 +45,9 @@
             btnAdd = new Button();
             btnEdit = new Button();
             btnDelete = new Button();
+            btnClearSearch = new Button();
+            label3 = new Label();
+            cmbSort = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvParts).BeginInit();
             SuspendLayout();
             // 
@@ -52,7 +55,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 14.25F);
-            label1.Location = new Point(26, 29);
+            label1.Location = new Point(29, 12);
             label1.Name = "label1";
             label1.Size = new Size(93, 25);
             label1.TabIndex = 0;
@@ -61,9 +64,10 @@
             // txtSearch
             // 
             txtSearch.Font = new Font("Segoe UI", 14.25F);
-            txtSearch.Location = new Point(125, 29);
+            txtSearch.Location = new Point(29, 43);
             txtSearch.Name = "txtSearch";
-            txtSearch.Size = new Size(256, 33);
+            txtSearch.PlaceholderText = "Въведи текст за търсене";
+            txtSearch.Size = new Size(361, 33);
             txtSearch.TabIndex = 1;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
@@ -71,7 +75,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 14.25F);
-            label2.Location = new Point(541, 37);
+            label2.Location = new Point(487, 51);
             label2.Name = "label2";
             label2.Size = new Size(148, 25);
             label2.TabIndex = 2;
@@ -82,9 +86,9 @@
             cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbCategory.Font = new Font("Segoe UI", 14.25F);
             cmbCategory.FormattingEnabled = true;
-            cmbCategory.Location = new Point(695, 37);
+            cmbCategory.Location = new Point(641, 48);
             cmbCategory.Name = "cmbCategory";
-            cmbCategory.Size = new Size(164, 33);
+            cmbCategory.Size = new Size(221, 33);
             cmbCategory.TabIndex = 3;
             cmbCategory.SelectedIndexChanged += cmbCategory_SelectedIndexChanged;
             // 
@@ -112,14 +116,15 @@
             dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
             dgvParts.DefaultCellStyle = dataGridViewCellStyle4;
-            dgvParts.Location = new Point(26, 89);
+            dgvParts.Location = new Point(29, 90);
             dgvParts.MultiSelect = false;
             dgvParts.Name = "dgvParts";
             dgvParts.ReadOnly = true;
             dgvParts.RowHeadersVisible = false;
             dgvParts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvParts.Size = new Size(833, 350);
+            dgvParts.Size = new Size(833, 421);
             dgvParts.TabIndex = 4;
+            dgvParts.CellDoubleClick += dgvParts_CellDoubleClick;
             // 
             // colName
             // 
@@ -170,7 +175,7 @@
             // 
             btnAdd.BackColor = Color.LightGreen;
             btnAdd.Font = new Font("Segoe UI", 14.25F);
-            btnAdd.Location = new Point(484, 445);
+            btnAdd.Location = new Point(487, 517);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(121, 54);
             btnAdd.TabIndex = 5;
@@ -182,7 +187,7 @@
             // 
             btnEdit.BackColor = Color.LightBlue;
             btnEdit.Font = new Font("Segoe UI", 14.25F);
-            btnEdit.Location = new Point(611, 445);
+            btnEdit.Location = new Point(614, 517);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(121, 54);
             btnEdit.TabIndex = 5;
@@ -194,7 +199,7 @@
             // 
             btnDelete.BackColor = Color.Coral;
             btnDelete.Font = new Font("Segoe UI", 14.25F);
-            btnDelete.Location = new Point(738, 445);
+            btnDelete.Location = new Point(741, 517);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(121, 54);
             btnDelete.TabIndex = 5;
@@ -202,11 +207,45 @@
             btnDelete.UseVisualStyleBackColor = false;
             btnDelete.Click += btnDelete_Click;
             // 
+            // btnClearSearch
+            // 
+            btnClearSearch.BackColor = Color.Coral;
+            btnClearSearch.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnClearSearch.Location = new Point(396, 43);
+            btnClearSearch.Name = "btnClearSearch";
+            btnClearSearch.Size = new Size(33, 33);
+            btnClearSearch.TabIndex = 6;
+            btnClearSearch.Text = "X";
+            btnClearSearch.UseVisualStyleBackColor = false;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 14.25F);
+            label3.Location = new Point(510, 12);
+            label3.Name = "label3";
+            label3.Size = new Size(125, 25);
+            label3.TabIndex = 7;
+            label3.Text = "Подреди по :";
+            // 
+            // cmbSort
+            // 
+            cmbSort.Font = new Font("Segoe UI", 14.25F);
+            cmbSort.FormattingEnabled = true;
+            cmbSort.Location = new Point(641, 9);
+            cmbSort.Name = "cmbSort";
+            cmbSort.Size = new Size(221, 33);
+            cmbSort.TabIndex = 8;
+            cmbSort.SelectedIndexChanged += cmbSort_SelectedIndexChanged;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(884, 511);
+            ClientSize = new Size(884, 583);
+            Controls.Add(cmbSort);
+            Controls.Add(label3);
+            Controls.Add(btnClearSearch);
             Controls.Add(btnDelete);
             Controls.Add(btnEdit);
             Controls.Add(btnAdd);
@@ -241,5 +280,8 @@
         private DataGridViewTextBoxColumn colQuantity;
         private DataGridViewTextBoxColumn colPrice;
         private DataGridViewTextBoxColumn colType;
+        private Button btnClearSearch;
+        private Label label3;
+        private ComboBox cmbSort;
     }
 }

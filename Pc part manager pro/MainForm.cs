@@ -1,9 +1,5 @@
 using Pc_part_manager_pro.DAL;
 using Pc_part_manager_pro.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace Pc_part_manager_pro
 {
@@ -18,30 +14,35 @@ namespace Pc_part_manager_pro
         public MainForm()
         {
             InitializeComponent();
+
+            // Включваме DoubleBuffering за DataGridView,
+            // за да предотвратим премигването (flickering) на таблицата при динамично филтриране в реално време
+            typeof(DataGridView).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty,
+                null, dgvParts, new object[] { true });
         }
 
-        // Това събитие се задейства при стартиране на формата
         private void MainForm_Load(object sender, EventArgs e)
         {
             RefreshGrid();
             LoadCategories();
+            LoadSortOptions(); 
         }
 
-        // Помощен метод, който пълни DataGridView-то от базата данни
+        // Помощен метод, който пълни DataGridView от базата данни
         private void RefreshGrid()
         {
             try
             {
                 dgvParts.AutoGenerateColumns = false;
-                colPrice.DefaultCellStyle.Format = "#,##0.00 '€'";
 
-                // Подравняваме цената вдясно, за да изглежда професионално и прегледно
-                colPrice.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                colPrice.DefaultCellStyle.FormatProvider = System.Globalization.CultureInfo.InvariantCulture;
+                colPrice.DefaultCellStyle.Format = "#,##0.00 '€'";
 
                 // Взимаме данните от базата и ги кешираме в паметта
                 _allParts = _repo.GetAll();
 
-                // Прилагаме филтрите (за търсачката и категорията)
+                // Прилагаме филтрите и сортирането веднага
                 ApplyFilters();
             }
             catch (Exception ex)
@@ -50,24 +51,25 @@ namespace Pc_part_manager_pro
             }
         }
 
-        // МЕТОД ЗА ДИНАМИЧНО ФИЛТРИРАНЕ НА ДАННИТЕ В ПАМЕТТА (LINQ)
+        // МЕТОД ЗА ДИНАМИЧНО ФИЛТРИРАНЕ И СОРТИРАНЕ НА ДАННИТЕ В ПАМЕТТА (LINQ)
         private void ApplyFilters()
         {
             if (_allParts == null) return;
 
             string searchText = txtSearch.Text.Trim().ToLower();
             string selectedCategory = cmbCategory.SelectedItem?.ToString() ?? "Всички";
+            string selectedSort = cmbSort.SelectedItem?.ToString() ?? "Няма";
 
-            // Започваме филтрирането от пълния списък
+            // --- 1. ФИЛТРИРАНЕ ---
             var filteredList = _allParts.AsEnumerable();
 
-            // 1. Филтър по КАТЕГОРИЯ (от падащото меню)
+            // Филтър по КАТЕГОРИЯ (от падащото меню)
             if (selectedCategory != "Всички")
             {
                 filteredList = filteredList.Where(p => p.PartType.Equals(selectedCategory, StringComparison.OrdinalIgnoreCase));
             }
 
-            // 2. Динамичен филтур по ИМЕ или ПРОИЗВОДИТЕЛ (от текстовата кутия)
+            // Динамичен филтър по ИМЕ или ПРОИЗВОДИТЕЛ (от текстовата кутия)
             if (!string.IsNullOrEmpty(searchText))
             {
                 filteredList = filteredList.Where(p =>
@@ -76,7 +78,27 @@ namespace Pc_part_manager_pro
                 );
             }
 
-            // 3. Закачаме филтрирания резултат към таблицата на екрана
+            // --- 2. СОРТИРАНЕ  ---
+            switch (selectedSort)
+            {
+                case "Цена: Възходяща":
+                    filteredList = filteredList.OrderBy(p => p.Price);
+                    break;
+                case "Цена: Низходяща":
+                    filteredList = filteredList.OrderByDescending(p => p.Price);
+                    break;
+                case "Наличност: Възходяща":
+                    filteredList = filteredList.OrderBy(p => p.Quantity);
+                    break;
+                case "Наличност: Низходяща":
+                    filteredList = filteredList.OrderByDescending(p => p.Quantity);
+                    break;
+                default:
+                    // "Няма" - оставя оригиналната подредба от базата данни
+                    break;
+            }
+
+            // --- 3. ВИЗУАЛИЗАЦИЯ ---
             dgvParts.DataSource = null;
             dgvParts.DataSource = filteredList.ToList();
         }
@@ -91,7 +113,12 @@ namespace Pc_part_manager_pro
             ApplyFilters();
         }
 
-        // Помощен метод за пълнене на ComboBox-а
+        private void cmbSort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        // Помощен метод за пълнене на ComboBox-а за категории
         private void LoadCategories()
         {
             cmbCategory.Items.Clear();
@@ -103,6 +130,28 @@ namespace Pc_part_manager_pro
             cmbCategory.Items.Add("SSD");
 
             cmbCategory.SelectedIndex = 0; // По подразбиране да е на "Всички"
+        }
+
+        // Помощен метод за пълнене на ComboBox-а за сортиране
+        private void LoadSortOptions()
+        {
+            cmbSort.Items.Clear();
+            cmbSort.Items.Add("Няма");
+            cmbSort.Items.Add("Цена: Възходяща");
+            cmbSort.Items.Add("Цена: Низходяща");
+            cmbSort.Items.Add("Наличност: Възходяща");
+            cmbSort.Items.Add("Наличност: Низходяща");
+
+            cmbSort.SelectedIndex = 0; // По подразбиране да е на "Няма"
+        }
+
+        private void dgvParts_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Проверяваме дали кликът е върху валиден ред (а не върху заглавката на колоните)
+            if (e.RowIndex >= 0)
+            {
+                btnEdit_Click(sender, e); // Директно извикваме логиката на бутона за редакция
+            }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
