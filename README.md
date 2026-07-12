@@ -31,13 +31,8 @@
    ```csharp
    "Server=localhost;Database=pcpartsprodb;Uid=YOUR_USERNAME;Pwd=YOUR_PASSWORD;"
 
-
 ### 3. Компилиране и пускане
 
 1. Отворете решението на проекта (`.sln` файла) във **Visual Studio**.
 2. Изчакайте NuGet пакетите (като `MySql.Data`) да се възстановят автоматично.
 3. Натиснете бутона **Start** (или клавиша `F5`), за да компилирате и стартирате приложението.
-
-```
-
-```
