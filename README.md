@@ -36,7 +36,7 @@
 2. Проверете и коригирайте низа за връзка (`ConnectionString`), за да съвпада с вашите данни за достъп (потребителско име и парола за MySQL):
    ```csharp
    public static string ConnString = "server=localhost;database=PcPartsProDb;port=3306;uid=root;pwd=;charset=utf8;";
----
+   
 ### 3. Компилиране и пускане
 
 1. Отворете решението на проекта (`.sln` файла) във **Visual Studio**.
