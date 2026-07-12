@@ -29,7 +29,7 @@
 1. В проекта намерете файла, отговорен за връзката с базата (обикновено `DbConfig.cs` в папка `DAL`).
 2. Проверете и коригирайте низа за връзка (`ConnectionString`), за да съвпада с вашите данни за достъп (потребителско име и парола за MySQL):
    ```csharp
-   "public static string ConnString = "server=localhost;database=PcPartsProDb;port=3306;uid=root;pwd=;charset=utf8;";"
+   public static string ConnString = "server=localhost;database=PcPartsProDb;port=3306;uid=root;pwd=;charset=utf8;";
 
 ### 3. Компилиране и пускане
 
