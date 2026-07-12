@@ -48,6 +48,8 @@
             btnClearSearch = new Button();
             label3 = new Label();
             cmbSort = new ComboBox();
+            btnThemeToggle = new Button();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvParts).BeginInit();
             SuspendLayout();
             // 
@@ -238,11 +240,33 @@
             cmbSort.TabIndex = 8;
             cmbSort.SelectedIndexChanged += cmbSort_SelectedIndexChanged;
             // 
+            // btnThemeToggle
+            // 
+            btnThemeToggle.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnThemeToggle.Location = new Point(90, 517);
+            btnThemeToggle.Name = "btnThemeToggle";
+            btnThemeToggle.Size = new Size(65, 54);
+            btnThemeToggle.TabIndex = 9;
+            btnThemeToggle.Text = "🌙";
+            btnThemeToggle.UseVisualStyleBackColor = true;
+            btnThemeToggle.Click += btnThemeToggle_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 14.25F);
+            label4.Location = new Point(29, 532);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 25);
+            label4.TabIndex = 0;
+            label4.Text = "Тема";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(884, 583);
+            Controls.Add(btnThemeToggle);
             Controls.Add(cmbSort);
             Controls.Add(label3);
             Controls.Add(btnClearSearch);
@@ -253,6 +277,7 @@
             Controls.Add(cmbCategory);
             Controls.Add(label2);
             Controls.Add(txtSearch);
+            Controls.Add(label4);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -283,5 +308,7 @@
         private Button btnClearSearch;
         private Label label3;
         private ComboBox cmbSort;
+        private Button btnThemeToggle;
+        private Label label4;
     }
 }

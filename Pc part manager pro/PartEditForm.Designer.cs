@@ -567,7 +567,7 @@
             // 
             btnSave.BackColor = Color.LightGreen;
             btnSave.Font = new Font("Segoe UI", 14.25F);
-            btnSave.Location = new Point(221, 301);
+            btnSave.Location = new Point(270, 301);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(115, 51);
             btnSave.TabIndex = 5;
@@ -579,7 +579,7 @@
             // 
             btnCancel.BackColor = Color.Coral;
             btnCancel.Font = new Font("Segoe UI", 14.25F);
-            btnCancel.Location = new Point(404, 301);
+            btnCancel.Location = new Point(432, 301);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(115, 51);
             btnCancel.TabIndex = 5;

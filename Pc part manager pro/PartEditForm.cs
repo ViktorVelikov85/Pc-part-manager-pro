@@ -21,7 +21,7 @@ namespace Pc_part_manager_pro
             {
                 cmbType.SelectedIndex = 0;
             }
-
+            ApplyCurrentTheme();
             // Закачаме събитието, което се изпълнява ВЕДНАГА след като формата се покаже
             this.Shown += PartEditForm_Shown;
         }
@@ -49,7 +49,7 @@ namespace Pc_part_manager_pro
 
             UpdateSpecificPanelVisibility(typeForCombo);
             PopulateSpecificFields(partToEdit);
-
+            ApplyCurrentTheme();
             // Закачаме събитието, което се изпълнява ВЕДНАГА след като формата се покаже
             this.Shown += PartEditForm_Shown;
         }
@@ -123,12 +123,36 @@ namespace Pc_part_manager_pro
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(txtName.Text) || string.IsNullOrWhiteSpace(txtManufacturer.Text))
+                // --- 1. ПЪЛНА ВАЛИДАЦИЯ ПРЕДИ ЗАТВАРЯНЕ НА ФОРМАТА (Задържа потребителя тук при грешка) ---
+                if (string.IsNullOrWhiteSpace(txtName.Text))
                 {
-                    MessageBox.Show("Моля, попълнете наименованието и производителя!", "Валидация", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Името на компонента не може да бъде празно!", "Валидация", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtName.Focus();
+                    return; // Спира изпълнението и ОСТАВЯ потребителя във формата
+                }
+
+                if (string.IsNullOrWhiteSpace(txtManufacturer.Text))
+                {
+                    MessageBox.Show("Производителят не може да бъде празен!", "Валидация", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtManufacturer.Focus();
                     return;
                 }
 
+                if (numPrice.Value <= 0)
+                {
+                    MessageBox.Show("Цената трябва да бъде по-голяма от 0.00 €!", "Валидация", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    numPrice.Focus();
+                    return;
+                }
+
+                if (numQuantity.Value < 0)
+                {
+                    MessageBox.Show("Количеството не може да бъде отрицателно число!", "Валидация", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    numQuantity.Focus();
+                    return;
+                }
+
+                // --- 2. СЪЗДАВАНЕ НА ОБЕКТ (АКО НЕ СМЕ В РЕЖИМ НА РЕДАКЦИЯ) ---
                 if (!_isEditMode)
                 {
                     string selectedType = cmbType.SelectedItem.ToString();
@@ -142,11 +166,13 @@ namespace Pc_part_manager_pro
                     }
                 }
 
-                CreatedPart.Name = txtName.Text;
-                CreatedPart.Manufacturer = txtManufacturer.Text;
+                // --- 3. ЗАПИС НА БАЗОВИТЕ СВОЙСТВА ---
+                CreatedPart.Name = txtName.Text.Trim();
+                CreatedPart.Manufacturer = txtManufacturer.Text.Trim();
                 CreatedPart.Price = numPrice.Value;
                 CreatedPart.Quantity = (int)numQuantity.Value;
 
+                // --- 4. ЗАПИС НА СПЕЦИФИЧНИТЕ СВОЙСТВА (ТВОЯ ОРИГИНАЛЕН КОД) ---
                 if (CreatedPart is Cpu cpu)
                 {
                     cpu.Cores = (int)numCpuCores.Value;
@@ -181,6 +207,7 @@ namespace Pc_part_manager_pro
                     ssd.ReadSpeedMb = (int)numSsdReadSpeed.Value;
                 }
 
+                // Едва сега, когато всичко е успешно попълнено и валидирано, затваряме формата с OK
                 DialogResult = DialogResult.OK;
                 Close();
             }
@@ -293,5 +320,78 @@ namespace Pc_part_manager_pro
             lblSsdForm.Visible = visible;
             lblSsdReadSpeed.Visible = visible;
         }
+        private void ApplyCurrentTheme()
+        {
+            Color darkBg = Color.FromArgb(54, 57, 63);
+            Color inputBg = Color.FromArgb(47, 49, 54);
+
+            if (MainForm.IsDarkMode)
+            {
+                ApplyEditFormTheme(this, darkBg, Color.White, inputBg);
+
+                // Директен фикс за ComboBox-а във формата за редактиране/добавяне
+                cmbType.FlatStyle = FlatStyle.Flat;
+                cmbType.BackColor = inputBg;
+                cmbType.ForeColor = Color.White;
+                cmbType.Invalidate();
+            }
+            else
+            {
+                ApplyEditFormTheme(this, SystemColors.Control, SystemColors.ControlText, SystemColors.Window);
+
+                cmbType.FlatStyle = FlatStyle.Standard;
+                cmbType.BackColor = SystemColors.Window;
+                cmbType.ForeColor = SystemColors.ControlText;
+            }
+        }
+
+        private void ApplyEditFormTheme(Control root, Color backColor, Color foreColor, Color inputBackColor)
+        {
+            root.BackColor = backColor;
+
+            foreach (Control child in root.Controls)
+            {
+                // ИЗРИЧНО ЗАПАЗВАНЕ НА ЦВЕТОВЕТЕ НА БУТОНИТЕ ЗА ЗАПАЗВАНЕ И ОТКАЗ (без бели кантове)
+                if (child is Button btnCheck && (btnCheck.Name == "btnSave" || btnCheck.Name == "btnCancel"))
+                {
+                    btnCheck.FlatStyle = MainForm.IsDarkMode ? FlatStyle.Flat : FlatStyle.Standard;
+                    btnCheck.FlatAppearance.BorderSize = MainForm.IsDarkMode ? 0 : 1;
+                    btnCheck.BackColor = btnCheck.Name == "btnSave" ? Color.LightGreen : Color.Coral;
+                    btnCheck.ForeColor = Color.Black;
+                    continue;
+                }
+
+                if (child is TextBox || child is NumericUpDown)
+                {
+                    child.BackColor = MainForm.IsDarkMode ? inputBackColor : SystemColors.Window;
+                    child.ForeColor = MainForm.IsDarkMode ? foreColor : SystemColors.ControlText;
+                }
+                else if (child is ComboBox cmb)
+                {
+                    cmb.FlatStyle = MainForm.IsDarkMode ? FlatStyle.Flat : FlatStyle.Standard;
+                    cmb.BackColor = MainForm.IsDarkMode ? inputBackColor : SystemColors.Window;
+                    cmb.ForeColor = MainForm.IsDarkMode ? foreColor : SystemColors.ControlText;
+                    cmb.Invalidate();
+                }
+                else if (child is Label)
+                {
+                    child.ForeColor = foreColor;
+                }
+                else if (child is Button btn)
+                {
+                    btn.FlatStyle = MainForm.IsDarkMode ? FlatStyle.Flat : FlatStyle.Standard;
+                    btn.FlatAppearance.BorderSize = MainForm.IsDarkMode ? 0 : 1;
+                    btn.BackColor = MainForm.IsDarkMode ? inputBackColor : SystemColors.Control;
+                    btn.ForeColor = MainForm.IsDarkMode ? foreColor : SystemColors.ControlText;
+                }
+
+                // Продължаваме обхождането и в pnlSpecifics
+                if (child.HasChildren && !(child is NumericUpDown) && !(child is ComboBox))
+                {
+                    ApplyEditFormTheme(child, backColor, foreColor, inputBackColor);
+                }
+            }
+        }
+
     }
 }

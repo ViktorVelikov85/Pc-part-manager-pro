@@ -163,30 +163,6 @@ namespace Pc_part_manager_pro.DAL
             }
         }
 
-        // ==========================================
-        // 5. ТЪРСЕНЕ И ФИЛТРИРАНЕ
-        // ==========================================
-        public List<ComputerPart> Search(string keyword)
-        {
-            List<ComputerPart> list = new List<ComputerPart>();
-            string sql = GetBaseSelectQuery() + " WHERE p.name LIKE @key OR p.manufacturer LIKE @key;";
-            MySqlParameter[] ps = { new MySqlParameter("@key", $"%{keyword}%") };
-
-            DataTable table = DbConfig.GetTable(sql, ps);
-            foreach (DataRow row in table.Rows) list.Add(MapRowToPart(row));
-            return list;
-        }
-
-        public List<ComputerPart> FilterByCategory(int categoryId)
-        {
-            List<ComputerPart> list = new List<ComputerPart>();
-            string sql = GetBaseSelectQuery() + " WHERE p.category_id = @catId;";
-            MySqlParameter[] ps = { new MySqlParameter("@catId", categoryId) };
-
-            DataTable table = DbConfig.GetTable(sql, ps);
-            foreach (DataRow row in table.Rows) list.Add(MapRowToPart(row));
-            return list;
-        }
 
         // ==========================================
         // 🛠️ ПОМОЩНИ ОПЕРАЦИИ И МАПВАНЕ (ПОЛИМОРФИЗЪМ)
